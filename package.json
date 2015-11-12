@@ -31,6 +31,7 @@
     "vinyl-source-stream": "1.1.x",
     "vinyl-buffer": "1.0.x",
     "gulp-util": "3.0.x",
+    "gulp-watch": "4.3.x",
     "gulp-uglify": "1.4.x",
     "gulp-sourcemaps": "1.6.x"
   }

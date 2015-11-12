@@ -5,6 +5,7 @@ var babelify = require('babelify');
 var source = require('vinyl-source-stream');
 var buffer = require('vinyl-buffer');
 var gutil = require('gulp-util');
+var watch = require('gulp-watch');
 var uglify = require('gulp-uglify');
 var sourcemaps = require('gulp-sourcemaps');
 
@@ -32,18 +33,25 @@ function bundle() {
 gulp.task('js', bundle);
 
 gulp.task('static', function() {
-  return gulp.src('./src/www/**')
+  return gulp.src('./src/www/**/*')
     .pipe(gulp.dest('./public'));
 });
 
 gulp.task('build', ['js', 'static']);
 
-gulp.task('watch', function() {
-  gulp.watch('./src/www/**', ['static']);
+gulp.task('watch-static', function() {
+  return gulp.src('./src/www/**/*')
+    .pipe(watch('./src/www/**/*'))
+    .pipe(gulp.dest('./public'));
+});
+
+gulp.task('watch-js', function() {
   bundler.plugin(watchify)
     .on('update', bundle)
     .on('log', gutil.log.bind(gutil, '[watchify]'));
   return bundle();
 });
+
+gulp.task('watch', ['watch-static', 'watch-js']);
 
 gulp.task('default', ['watch']);
