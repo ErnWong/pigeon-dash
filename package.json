@@ -8,9 +8,6 @@
     "type": "git",
     "url": "https://github.com/ErnWong/pigeon-dash.git"
   },
-  "scripts": {
-    "start": "node ./src/server/server.js"
-  },
   "dependencies": {
     "express": "4.13.x",
     "socket.io": "1.3.x",
