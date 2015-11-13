@@ -3,15 +3,18 @@ var Card = require('material-ui/lib/card/card');
 var CardText = require('material-ui/lib/card/card-text');
 var List = require('material-ui/lib/lists/list');
 var ListItem = require('material-ui/lib/lists/list-item');
-var RefreshIndicator = require('material-ui/lib/refresh-indicator');
+var LinearProgress = require('material-ui/lib/linear-progress');
 var FontIcon = require('material-ui/lib/font-icon');
 
 var PortStore = require('../stores/port-store');
+var PortActions = require('../actions/port-actions');
 
 function getState() {
     return {
       loading: PortStore.isLoading(),
-      ports: PortStore.getPorts()
+      opening: PortStore.isOpening(),
+      ports: PortStore.getPorts(),
+      selected: PortStore.getSelected()
     };
 }
 
@@ -20,10 +23,10 @@ var PortList = React.createClass({
     return getState();
   },
   componentDidMount: function() {
-    PortStore.on('change', this.listChanged);
+    PortStore.on('changed', this.listChanged);
   },
   componentWillUnmount: function() {
-    PortStore.removeListener('change', this.listChanged);
+    PortStore.removeListener('changed', this.listChanged);
   },
   listChanged: function() {
     this.setState(getState());
@@ -40,27 +43,37 @@ var PortList = React.createClass({
                 primaryText={`Open ${comName}`}
                 secondaryText={manufacturer}
                 rightIcon={<FontIcon className='material-icons'>input</FontIcon>}
-                onClick={this.handleClick.bind(this, comName)} />
+                style={{
+                  opacity: this.state.selected && this.state.selected != comName? 0.5 : 1
+                }}
+                onClick={this.state.selected?()=>{}:this.handleClick.bind(this, comName)} />
             ))
           }
         </List>
       );
     } else if (this.state.loading) {
-      list = <RefreshIndicator top={0} left={0} status='loading' />
+      list = <CardText>Loading...</CardText>
     } else {
       list = <CardText>No ports available.</CardText>
     }
     return (
       <Card style={{
         display: 'inline-block',
+        position: 'relative',
         minWidth: '16em'
       }}>
+        <LinearProgress
+          mode='indeterminate'
+          style={{
+            position: 'absolute',
+            display: (this.state.loading || this.state.opening)? 'block' : 'none'
+          }} />
         {list}
       </Card>
     );
   },
   handleClick: function(comName) {
-    console.log(`Logging props.children: ${this.props.children}`);
+    PortActions.selectPort(comName);
   }
 });
 

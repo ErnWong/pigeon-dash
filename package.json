@@ -18,6 +18,7 @@
     "react": "0.14.x",
     "react-dom": "0.14.x",
     "react-tap-event-plugin": "0.2.x",
+    "flux": "2.1.x",
     "material-ui": "0.13.x"
   },
   "devDependencies": {

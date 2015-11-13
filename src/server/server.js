@@ -34,6 +34,7 @@ io.on('connection', function(socket) {
         return;
       }
       port = path;
+      socket.emit('port-opened');
     });
   });
 
