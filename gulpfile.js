@@ -1,4 +1,5 @@
 var gulp = require('gulp');
+var nodemon = require('nodemon');
 var browserify = require('browserify');
 var watchify = require('watchify');
 var babelify = require('babelify');
@@ -8,6 +9,7 @@ var gutil = require('gulp-util');
 var watch = require('gulp-watch');
 var uglify = require('gulp-uglify');
 var sourcemaps = require('gulp-sourcemaps');
+var chalk = require('chalk');
 
 var bundler = browserify({
   entries: ['./src/app/dash.jsx'],
@@ -18,14 +20,19 @@ var bundler = browserify({
   packageCache: {}
 });
 
+function logger() {
+  var args = Array.prototype.slice.call(arguments);
+  return gutil.log.bind.apply(gutil.log, [gutil].concat(args));
+}
+
 function bundle() {
   return bundler.bundle()
-    .on('error', gutil.log.bind(gutil, '[browserify]'))
+    .on('error', logger(chalk.cyan('[browserify]')))
     .pipe(source('dash.js'))
     .pipe(buffer())
     .pipe(sourcemaps.init({loadMaps: true}))
     .pipe(uglify())
-    .on('error', gutil.log)
+    .on('error',logger())
     .pipe(sourcemaps.write())
     .pipe(gulp.dest('./public'));
 }
@@ -48,10 +55,22 @@ gulp.task('watch-static', function() {
 gulp.task('watch-js', function() {
   bundler.plugin(watchify)
     .on('update', bundle)
-    .on('log', gutil.log.bind(gutil, '[watchify]'));
+    .on('log', logger(chalk.magenta('[watchify]')));
   return bundle();
 });
 
 gulp.task('watch', ['watch-static', 'watch-js']);
 
-gulp.task('default', ['watch']);
+gulp.task('serve', function() {
+  nodemon({
+    script: './src/server/server.js',
+    ext: 'js json',
+    watch: './src/server',
+    verbose: true
+  })
+    .on('log', function(event) {
+      gutil.log(event.colour);
+    });
+});
+
+gulp.task('default', ['serve', 'watch']);
