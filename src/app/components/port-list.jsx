@@ -1,23 +1,40 @@
 var React = require('react');
 var Card = require('material-ui/lib/card/card');
+var CardText = require('material-ui/lib/card/card-text');
 var List = require('material-ui/lib/lists/list');
 var ListItem = require('material-ui/lib/lists/list-item');
+var RefreshIndicator = require('material-ui/lib/refresh-indicator');
 var FontIcon = require('material-ui/lib/font-icon');
 
+var PortStore = require('../stores/port-store');
+
+function getState() {
+    return {
+      loading: PortStore.isLoading(),
+      ports: PortStore.getPorts()
+    };
+}
+
 var PortList = React.createClass({
-  propTypes: {
-    ports: React.PropTypes.arrayOf(React.PropTypes.object)
+  getInitialState: function() {
+    return getState();
+  },
+  componentDidMount: function() {
+    PortStore.on('change', this.listChanged);
+  },
+  componentWillUnmount: function() {
+    PortStore.removeListener('change', this.listChanged);
+  },
+  listChanged: function() {
+    this.setState(getState());
   },
   render: function() {
-    var ports = this.props.ports || [];
-    return (
-      <Card style={{
-        display: 'inline-block',
-        minWidth: '16em'
-      }}>
+    var list;
+    if (this.state.ports.length > 0) {
+      list = (
         <List>
           {
-            ports.map(({comName, manufacturer}) => (
+            this.state.ports.map(({comName, manufacturer}) => (
               <ListItem
                 key={comName}
                 primaryText={`Open ${comName}`}
@@ -27,6 +44,18 @@ var PortList = React.createClass({
             ))
           }
         </List>
+      );
+    } else if (this.state.loading) {
+      list = <RefreshIndicator top={0} left={0} status='loading' />
+    } else {
+      list = <CardText>No ports available.</CardText>
+    }
+    return (
+      <Card style={{
+        display: 'inline-block',
+        minWidth: '16em'
+      }}>
+        {list}
       </Card>
     );
   },
