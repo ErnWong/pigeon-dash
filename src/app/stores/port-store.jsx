@@ -1,5 +1,4 @@
 var EventEmitter = require('events').EventEmitter;
-var socket = require('../socket');
 var DashDispatcher = require('../dispatcher/dash-dispatcher');
 var ActionTypes = require('../constants/action-types');
 
