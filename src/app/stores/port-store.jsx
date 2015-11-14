@@ -1,51 +1,52 @@
 var EventEmitter = require('events').EventEmitter;
 var socket = require('../socket');
 var DashDispatcher = require('../dispatcher/dash-dispatcher');
+var ActionTypes = require('../constants/action-types');
+
+var available = [];
+var loading = true;
+var opening = false;
+var selected = '';
+
 var PortStore = new EventEmitter();
 
-PortStore.ports = [];
-PortStore.loading = true;
-PortStore.opening = false;
-PortStore.selected = '';
-
-PortStore.getPorts = function() {
-  return PortStore.ports;
+PortStore.emitChange = function() {
+  this.emit('change');
+}
+PortStore.addChangeListener = function(listener) {
+  this.on('change', listener);
+}
+PortStore.removeChangeListener = function(listener) {
+  this.removeListener('change', listener);
+}
+PortStore.getAvailable = function() {
+  return available;
 };
 PortStore.isLoading = function() {
-  return PortStore.loading;
+  return loading;
 };
 PortStore.isOpening = function() {
-  return PortStore.opening;
+  return opening;
 };
 PortStore.getSelected = function() {
-  return PortStore.selected;
+  return selected;
 };
-
-socket.on('port-list', function(ports) {
-  PortStore.loading = false;
-  PortStore.ports = ports;
-  PortStore.emit('changed');
-});
-
-socket.on('port-opened', function() {
-  PortStore.opening = false;
-  PortStore.emit('changed');
-});
-
-function requestUpdate() {
-  socket.emit('list-ports');
-}
-requestUpdate();
-var updateInterval = setInterval(requestUpdate, 2000);
 
 DashDispatcher.register(function(action) {
   switch (action.type) {
-    case 'select-port':
-      PortStore.selected = action.selection;
-      PortStore.opening = true;
-      clearInterval(updateInterval);
-      socket.emit('open-port', action.selection);
-      PortStore.emit('changed');
+    case ActionTypes.SELECT_PORT:
+      selected = action.selection;
+      opening = true;
+      PortStore.emitChange();
+      break;
+    case ActionTypes.RECEIVE_PORT_LIST:
+      loading = false;
+      available = action.ports;
+      PortStore.emitChange();
+      break;
+    case ActionTypes.RECEIVE_PORT_OPEN:
+      opening = false;
+      PortStore.emitChange();
       break;
   }
 });

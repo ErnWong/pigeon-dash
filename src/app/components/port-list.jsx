@@ -13,7 +13,7 @@ function getState() {
     return {
       loading: PortStore.isLoading(),
       opening: PortStore.isOpening(),
-      ports: PortStore.getPorts(),
+      ports: PortStore.getAvailable(),
       selected: PortStore.getSelected()
     };
 }
@@ -23,10 +23,10 @@ var PortList = React.createClass({
     return getState();
   },
   componentDidMount: function() {
-    PortStore.on('changed', this.listChanged);
+    PortStore.addChangeListener(this.listChanged);
   },
   componentWillUnmount: function() {
-    PortStore.removeListener('changed', this.listChanged);
+    PortStore.removeChangeListener(this.listChanged);
   },
   listChanged: function() {
     this.setState(getState());
