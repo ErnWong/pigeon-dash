@@ -2,10 +2,10 @@ var EventEmitter = require('events').EventEmitter;
 var DashDispatcher = require('../dispatcher/dash-dispatcher');
 var ActionTypes = require('../constants/action-types');
 
-var available = [];
-var loading = true;
-var opening = false;
-var selected = '';
+var _available = [];
+var _loading = true;
+var _opening = false;
+var _selected = '';
 
 var PortStore = new EventEmitter();
 
@@ -19,32 +19,32 @@ PortStore.removeChangeListener = function(listener) {
   this.removeListener('change', listener);
 }
 PortStore.getAvailable = function() {
-  return available;
+  return _available;
 };
 PortStore.isLoading = function() {
-  return loading;
+  return _loading;
 };
 PortStore.isOpening = function() {
-  return opening;
+  return _opening;
 };
 PortStore.getSelected = function() {
-  return selected;
+  return _selected;
 };
 
 DashDispatcher.register(function(action) {
   switch (action.type) {
     case ActionTypes.SELECT_PORT:
-      selected = action.selection;
-      opening = true;
+      _selected = action.selection;
+      _opening = true;
       PortStore.emitChange();
       break;
     case ActionTypes.RECEIVE_PORT_LIST:
-      loading = false;
-      available = action.ports;
+      _loading = false;
+      _available = action.ports;
       PortStore.emitChange();
       break;
     case ActionTypes.RECEIVE_PORT_OPEN:
-      opening = false;
+      _opening = false;
       PortStore.emitChange();
       break;
   }
