@@ -10,12 +10,12 @@ var PortStore = require('../stores/port-store');
 var PortActions = require('../actions/port-actions');
 
 function getState() {
-    return {
-      loading: PortStore.isLoading(),
-      opening: PortStore.isOpening(),
-      ports: PortStore.getAvailable(),
-      selected: PortStore.getSelected()
-    };
+  return {
+    loading: PortStore.isLoading(),
+    opening: PortStore.isOpening(),
+    ports: PortStore.getAvailable(),
+    selected: PortStore.getSelected()
+  };
 }
 
 var PortList = React.createClass({

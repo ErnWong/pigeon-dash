@@ -31,4 +31,8 @@ socket.on('port-opened', function() {
   Server.emit(ServerEvents.PORT_OPENED);
 });
 
+socket.on('port-closed', function() {
+  Server.emit(ServerEvents.PORT_CLOSED);
+});
+
 module.exports = Server;
