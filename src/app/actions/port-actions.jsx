@@ -28,6 +28,12 @@ var PortActions = {
       type: ActionTypes.RECEIVE_PORT_CLOSE
     });
   },
+  receiveData: function(data) {
+    DashDispatcher.dispatch({
+      type: ActionTypes.RECEIVE_PORT_DATA,
+      data: data
+    });
+  },
   startListening: function() {
     Server.startListening();
     DashDispatcher.dispatch({
@@ -50,6 +56,9 @@ Server.on(ServerEvents.PORT_OPENED, function() {
 });
 Server.on(ServerEvents.PORT_CLOSED, function() {
   PortActions.receiveClosed();
+});
+Server.on(ServerEvents.PORT_DATA, function(data) {
+  PortActions.receiveData(data);
 });
 
 module.exports = PortActions;

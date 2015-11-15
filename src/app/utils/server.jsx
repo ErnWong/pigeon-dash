@@ -35,4 +35,12 @@ socket.on('port-closed', function() {
   Server.emit(ServerEvents.PORT_CLOSED);
 });
 
+socket.on('port-data', function(data) {
+  Server.emit(ServerEvents.PORT_DATA, data);
+});
+
+// For dev friendliness:
+if (!window.dash) window.dash = {};
+window.dash.socket = socket;
+
 module.exports = Server;

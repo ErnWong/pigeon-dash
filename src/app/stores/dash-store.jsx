@@ -29,11 +29,9 @@ DashDispatcher.register(function(action) {
   switch (action.type) {
     case ActionTypes.OPEN_PANEL:
       var panel = {
-        type: action.panelType,
-        data: {}
+        type: action.panelType
       };
       _panels.push(panel);
-      PanelLogic.inits.get(panel.type)(panel.data);
       DashStore.emitChange();
       break;
     case ActionTypes.CLOSE_PANEL:

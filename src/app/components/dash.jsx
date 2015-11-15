@@ -18,12 +18,12 @@ var Dash = React.createClass({
     return getState();
   },
   componentDidMount: function() {
-    DashStore.addChangeListener(this.listChanged);
+    DashStore.addChangeListener(this.storeChanged);
   },
   componentWillUnmount: function() {
-    DashStore.removeChangeListener(this.listChanged);
+    DashStore.removeChangeListener(this.storeChanged);
   },
-  listChanged: function() {
+  storeChanged: function() {
     this.setState(getState());
   },
   render: function() {
@@ -32,7 +32,7 @@ var Dash = React.createClass({
       screen = <PortList />
     } else {
       screen = this.state.panels.map(function(panel, key) {
-        return PanelLogic.renders.get(panel.type)(panel.data, key);
+        return PanelLogic.renders.get(panel.type)(panel, key);
       });
     }
     return (
