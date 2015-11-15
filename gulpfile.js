@@ -31,7 +31,7 @@ function bundle() {
     .pipe(source('dash.js'))
     .pipe(buffer())
     .pipe(sourcemaps.init({loadMaps: true}))
-    .pipe(uglify())
+     //.pipe(uglify())
     .on('error',logger())
     .pipe(sourcemaps.write())
     .pipe(gulp.dest('./public'));
