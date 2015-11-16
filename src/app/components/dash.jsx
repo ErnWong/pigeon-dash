@@ -37,7 +37,7 @@ var Dash = React.createClass({
     }
     return (
       <div style={{
-        height: '100%',
+        minHeight: '100%',
         display: 'flex',
         flexFlow: 'column'
       }}>
@@ -50,10 +50,11 @@ var Dash = React.createClass({
           justifyContent: 'center',
           alignItems: 'center',
           width: '100%',
-          height: '100%',
+          minHeight: '100%',
           backgroundColor: Colors.grey100,
           flexShrink: '1',
           flexGrow: '1',
+          flexWrap: 'wrap'
         }}>
           {screen}
         </div>
