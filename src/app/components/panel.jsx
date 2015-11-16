@@ -10,7 +10,7 @@ var Panel = React.createClass({
     var style = this.props.style || {};
     var mergedStyles = update({
       width: '500px',
-      height: '300px',
+      height: '400px',
       margin: '50px',
       overflow: 'hidden'
     }, {$merge: style});

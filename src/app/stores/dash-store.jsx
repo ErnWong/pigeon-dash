@@ -35,7 +35,9 @@ DashDispatcher.register(function(action) {
       DashStore.emitChange();
       break;
     case ActionTypes.CLOSE_PANEL:
-      _panels.splice(action.id, 1);
+      var index = _panels.indexOf(action.panel);
+      if (index === -1) break;
+      _panels.splice(index, 1);
       DashStore.emitChange();
       break;
     case ActionTypes.RECEIVE_PORT_OPEN:

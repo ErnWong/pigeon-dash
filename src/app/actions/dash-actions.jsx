@@ -8,10 +8,10 @@ module.exports = {
       panelType: panelType
     });
   },
-  closePanel: function(panelId) {
+  closePanel: function(panel) {
     DashDispatcher.dispatch({
       type: ActionTypes.CLOSE_PANEL,
-      id: panelId
+      panel: panel
     });
   }
 };

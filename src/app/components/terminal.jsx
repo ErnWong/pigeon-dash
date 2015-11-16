@@ -1,6 +1,12 @@
 var React = require('react');
-var TerminalStore = require('../stores/terminal-store');
 var Panel = require('../components/panel');
+var Toolbar = require('material-ui/lib/toolbar/toolbar');
+var ToolbarGroup = require('material-ui/lib/toolbar/toolbar-group');
+var IconButton = require('material-ui/lib/icon-button');
+var FontIcon = require('material-ui/lib/font-icon');
+
+var TerminalStore = require('../stores/terminal-store');
+var DashActions = require('../actions/dash-actions');
 
 function getState(component) {
   var panel = component.props.panel;
@@ -29,11 +35,26 @@ var Terminal = React.createClass({
     }).join('\n');
     return (
       <Panel>
+        <Toolbar>
+          <ToolbarGroup key={0} float='right'>
+            <FontIcon
+              onClick={this.handleOpenFilter}
+              className='material-icons'>filter_list</FontIcon>
+            <FontIcon
+              onClick={this.handleClose}
+              className='material-icons'>close</FontIcon>
+          </ToolbarGroup>
+        </Toolbar>
         <pre>
           {messageDisplay}
         </pre>
       </Panel>
     );
+  },
+  handleOpenFilter: function() {
+  },
+  handleClose: function() {
+    DashActions.closePanel(this.props.panel);
   }
 });
 
