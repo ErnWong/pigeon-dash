@@ -14,6 +14,9 @@ Server.openPort = function(comName) {
 Server.requestPorts = function() {
   socket.emit('list-ports');
 };
+Server.writePort = function(message) {
+  socket.emit('write-port', message);
+};
 Server.startListening = function() {
   listeningId = setInterval(this.requestPorts, 2000);
 };

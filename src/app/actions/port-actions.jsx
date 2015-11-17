@@ -45,6 +45,9 @@ var PortActions = {
     DashDispatcher.dispatch({
       type: ActionTypes.STOP_PORT_LISTENING
     });
+  },
+  write: function(message) {
+    Server.writePort(message);
   }
 };
 

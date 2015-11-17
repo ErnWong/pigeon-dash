@@ -8,6 +8,7 @@ var FontIcon = require('material-ui/lib/font-icon');
 var TerminalStore = require('../stores/terminal-store');
 var DashActions = require('../actions/dash-actions');
 var TerminalActions = require('../actions/terminal-actions');
+var PortActions = require('../actions/port-actions');
 
 function getState(component) {
   var panel = component.props.panel;
@@ -20,7 +21,9 @@ function getState(component) {
 
 var TerminalPanel = React.createClass({
   getInitialState: function() {
-    return getState(this);
+    var state = getState(this);
+    state.inputText = '';
+    return state;
   },
   componentDidMount: function() {
     TerminalStore.addChangeListener(this.storeChanged);
@@ -56,15 +59,46 @@ var TerminalPanel = React.createClass({
         </Toolbar>
         <div
           style={{
-            overflow: 'auto',
             flexGrow: '1',
             backgroundColor: '#272822',
             color: '#FFFFFF',
-            padding: '1em'
+            fontFamily: 'Consolas',
+            fontSize: '10pt',
+            padding: '1em',
+            display: 'flex',
+            flexFlow: 'column'
           }}>
-          <pre>
-            {messageDisplay}
-          </pre>
+          <div
+            style={{
+              overflow: 'auto',
+              flexGrow: '1'
+            }}>
+            <pre>
+              {messageDisplay}
+            </pre>
+          </div>
+          <div
+            style={{
+              display: 'flex',
+              flexFlow: 'row'
+            }}>
+            <FontIcon
+              className='material-icons'
+              color='#CACACA'
+              hoverColor='#FFFFFF' >keyboard_arrow_right</FontIcon>
+            <input
+              onChange={(e) => this.setState({inputText: e.target.value})}
+              onKeyDown={(e) => {if (e.keyCode === 13) this.handleSend()}}
+              value={this.state.inputText}
+              style={{
+              background: 'none',
+              border: 'none',
+              outline: 'none',
+              font: 'inherit',
+              color: 'inherit',
+              flexGrow: '1'
+            }} />
+          </div>
         </div>
       </Panel>
     );
@@ -76,6 +110,12 @@ var TerminalPanel = React.createClass({
   },
   handleClose: function() {
     DashActions.closePanel(this.props.panel);
+  },
+  handleSend: function() {
+    PortActions.write(this.state.inputText + '\n');
+    this.setState({
+      inputText: ''
+    });
   }
 });
 
