@@ -6,7 +6,6 @@ var _terminals = new WeakMap();
 var _messages = [];
 
 function addTerminal(panel) {
-  console.log('DEBUG new panel requested info, adding to weakmap');
   _terminals.set(panel, {
     messages: [],
     filters: [],
