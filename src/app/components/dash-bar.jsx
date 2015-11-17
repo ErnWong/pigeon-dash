@@ -5,8 +5,10 @@ var MenuItem = require('material-ui/lib/menus/menu-item');
 var IconButton = require('material-ui/lib/icon-button');
 var FontIcon = require('material-ui/lib/font-icon');
 
+var TerminalPanel = require('../components/terminal-panel');
+var SettingsPanel = require('../components/settings-panel');
+var PlotterPanel = require('../components/plotter-panel');
 var DashStore = require('../stores/dash-store');
-var PanelTypes = require('../constants/panel-types');
 var DashActions = require('../actions/dash-actions');
 
 function getState() {
@@ -40,13 +42,13 @@ var DashBar = React.createClass({
         }>
           <MenuItem primaryText='Add terminal' leftIcon={
             <FontIcon className='material-icons'>code</FontIcon>
-          } onClick = {this.handleMenuClick.bind(this, PanelTypes.TERMINAL)} />
+          } onClick = {this.handleMenuClick.bind(this, TerminalPanel)} />
           <MenuItem primaryText='Add setting' leftIcon={
             <FontIcon className='material-icons'>tune</FontIcon>
-          } onClick = {this.handleMenuClick.bind(this, PanelTypes.SETTINGS)} />
+          } onClick = {this.handleMenuClick.bind(this, SettingsPanel)} />
           <MenuItem primaryText='Add Plot' leftIcon={
             <FontIcon className='material-icons'>insert_chart</FontIcon>
-          } onClick = {this.handleMenuClick.bind(this, PanelTypes.PLOTTER)} />
+          } onClick = {this.handleMenuClick.bind(this, PlotterPanel)} />
         </IconMenu>
       );
     }
@@ -57,8 +59,8 @@ var DashBar = React.createClass({
           {...conditionalProps} />
     );
   },
-  handleMenuClick: function(panelType) {
-    DashActions.openPanel(panelType);
+  handleMenuClick: function(panelClass) {
+    DashActions.openPanel(panelClass);
   }
 });
 

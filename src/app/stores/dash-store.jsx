@@ -1,8 +1,6 @@
 var EventEmitter = require('events').EventEmitter;
 var DashDispatcher = require('../dispatcher/dash-dispatcher');
 var ActionTypes = require('../constants/action-types');
-var PanelTypes = require('../constants/panel-types');
-var PanelLogic = require('../utils/panel-logic');
 
 var DashStore = new EventEmitter();
 
@@ -29,7 +27,8 @@ DashDispatcher.register(function(action) {
   switch (action.type) {
     case ActionTypes.OPEN_PANEL:
       var panel = {
-        type: action.panelType
+        class: action.class,
+        id: Date.now()
       };
       _panels.push(panel);
       DashStore.emitChange();

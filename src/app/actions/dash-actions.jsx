@@ -2,10 +2,10 @@ var DashDispatcher = require('../dispatcher/dash-dispatcher');
 var ActionTypes = require('../constants/action-types');
 
 module.exports = {
-  openPanel: function(panelType) {
+  openPanel: function(panelClass) {
     DashDispatcher.dispatch({
       type: ActionTypes.OPEN_PANEL,
-      panelType: panelType
+      class: panelClass
     });
   },
   closePanel: function(panel) {

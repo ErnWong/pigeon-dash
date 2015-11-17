@@ -4,7 +4,6 @@ var PortList = require('./port-list');
 var DashBar = require('./dash-bar');
 
 var DashStore = require('../stores/dash-store');
-var PanelLogic = require('../utils/panel-logic');
 
 function getState() {
   return {
@@ -29,10 +28,10 @@ var Dash = React.createClass({
   render: function() {
     var screen;
     if (!this.state.connected) {
-      screen = <PortList />
+      screen = <PortList />;
     } else {
-      screen = this.state.panels.map(function(panel, key) {
-        return PanelLogic.renders.get(panel.type)(panel, key);
+      screen = this.state.panels.map(function(panel) {
+        return <panel.class panel={panel} key={panel.id} />;
       });
     }
     return (
