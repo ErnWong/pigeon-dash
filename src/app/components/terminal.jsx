@@ -45,9 +45,15 @@ var Terminal = React.createClass({
               className='material-icons'>close</FontIcon>
           </ToolbarGroup>
         </Toolbar>
-        <pre>
-          {messageDisplay}
-        </pre>
+        <div
+          style={{
+            overflowX: 'hidden',
+            overflowY: 'scroll'
+          }}>
+          <pre>
+            {messageDisplay}
+          </pre>
+        </div>
       </Panel>
     );
   },
