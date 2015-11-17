@@ -9,7 +9,8 @@ function addTerminal(panel) {
   console.log('DEBUG new panel requested info, adding to weakmap');
   _terminals.set(panel, {
     messages: [],
-    filters: []
+    filters: [],
+    paused: false
   });
 }
 
@@ -52,12 +53,16 @@ TerminalStore.getMessages = function(panel) {
   if (!_terminals.has(panel)) addTerminal(panel);
   var terminal = _terminals.get(panel);
 
-  updateMessages(terminal);
+  if (!terminal.paused) updateMessages(terminal);
   return terminal.messages;
 };
 TerminalStore.getFilters = function(panel) {
   if (!_terminals.has(panel)) addTerminal(panel);
   return _terminals.get(panel).filters;
+};
+TerminalStore.isPaused = function(panel) {
+  if (!_terminals.has(panel)) addTerminal(panel);
+  return _terminals.get(panel).paused;
 };
 
 DashDispatcher.register(function(action) {
@@ -66,6 +71,13 @@ DashDispatcher.register(function(action) {
       _messages.push(action.data);
       clipBuffer(_messages);
       TerminalStore.emitChange();
+      break;
+    case ActionTypes.TOGGLE_TERMINAL_PLAYPAUSE:
+      if (_terminals.has(action.panel)) {
+        var terminal = _terminals.get(action.panel);
+        terminal.paused = !terminal.paused;
+        TerminalStore.emitChange();
+      }
       break;
   }
 });

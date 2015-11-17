@@ -7,5 +7,6 @@ module.exports = {
   START_PORT_LISTENING: Symbol('start-port-listening'),
   STOP_PORT_LISTENING: Symbol('stop-port-listening'),
   OPEN_PANEL: Symbol('open-panel'),
-  CLOSE_PANEL: Symbol('close-panel')
+  CLOSE_PANEL: Symbol('close-panel'),
+  TOGGLE_TERMINAL_PLAYPAUSE: Symbol('toggle-terminal-playpause')
 };
