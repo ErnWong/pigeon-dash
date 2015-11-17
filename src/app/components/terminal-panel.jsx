@@ -71,7 +71,8 @@ var TerminalPanel = React.createClass({
           <div
             style={{
               overflow: 'auto',
-              flexGrow: '1'
+              flexGrow: '1',
+              height: '0'
             }}>
             <pre>
               {messageDisplay}
