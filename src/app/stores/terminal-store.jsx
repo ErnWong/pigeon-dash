@@ -23,7 +23,7 @@ function clipBuffer(buffer) {
 }
 
 function updateMessages(terminal) {
-  var lastMessage = terminal.messages[terminal.messages.length];
+  var lastMessage = terminal.messages[terminal.messages.length - 1];
   var i = _messages.length - 1;
   while (i >= 0) {
     if (_messages[i] === lastMessage) break;
