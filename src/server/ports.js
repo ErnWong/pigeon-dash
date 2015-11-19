@@ -3,6 +3,7 @@ var SerialPort = serialport.SerialPort;
 
 var parse = require('./parser');
 var utils = require('./utils');
+var mock = require('./mock');
 var info = utils.info;
 var error = utils.error;
 
@@ -14,6 +15,7 @@ function available(cb) {
     ports = ports.filter(function(port) {
       return !openPorts.has(port.comName);
     });
+    ports.push(mock.info);
     cb(err, ports);
   });
 }
@@ -27,10 +29,16 @@ function open(path, socket, cb) {
       var err = new Error('Opening unavailable port: ' + path);
       cb(err);
     }
-    var sp = new SerialPort(path, {
-      baudrate: 115200,
-      parser: serialport.parsers.readline('\n')
-    });
+    var sp;
+    if (path === mock.info.comName) {
+      sp = mock.open();
+    }
+    else {
+      sp = new SerialPort(path, {
+        baudrate: 115200,
+        parser: serialport.parsers.readline('\n')
+      });
+    }
     openPorts.set(path, sp);
     connect(sp, socket);
     cb();
