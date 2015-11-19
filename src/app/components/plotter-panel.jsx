@@ -15,6 +15,7 @@ var Dygraph = require('dygraphs');
 function getState(component) {
   var panel = component.props.panel;
   return {
+    recording: PlotterStore.isRecording(panel),
     keys: PlotterStore.getKeys(panel),
     data: PlotterStore.getData(panel)
   };
@@ -27,18 +28,26 @@ var PlotterPanel = React.createClass({
     return state;
   },
   componentWillMount: function() {
-    this.intervals = [];
+    this.interval = null;
   },
   componentDidMount: function() {
     PlotterStore.addChangeListener(this.storeChanged);
-    this.intervals.push(setInterval(this.tick, 40));
+    this.setInterval();
     this.dygraph = new Dygraph(this.refs.graphDiv, [[0]], {
-      labels: ['time']
+      labels: ['time'],
+      showRangeSelector: true
     });
   },
   componentWillUnmount: function() {
     PlotterStore.removeChangeListener(this.storeChanged);
-    this.intervals.forEach(clearInterval);
+    this.clearInterval();
+  },
+  setInterval: function() {
+    this.interval = setInterval(this.tick, 40);
+  },
+  clearInterval: function() {
+    clearInterval(this.interval);
+    this.interval = null;
   },
   storeChanged: function() {
     //this.setState(getState(this));
@@ -46,12 +55,15 @@ var PlotterPanel = React.createClass({
   tick: function() {
     this.setState(getState(this));
     var data = this.state.data;
+    var keys = ['time'].concat(this.state.keys)
     if (data.length === 0) {
-      data = [[0]];
+      var zeroes = Array(keys.length).fill(0);
+      // so Dygraph knows its intentionally empty
+      data = [zeroes];
     }
     this.dygraph.updateOptions({
       file: data,
-      labels: ['time'].concat(this.state.keys)
+      labels: keys
     });
   },
   render: function() {
@@ -67,6 +79,12 @@ var PlotterPanel = React.createClass({
           </ToolbarGroup>
           <ToolbarGroup key={1} float='right'>
             <FontIcon
+              onClick={this.handleRecordToggle}
+              className='material-icons'>{this.state.recording? 'pause' : 'fiber_manual_record'}</FontIcon>
+            <FontIcon
+              onClick={this.handleClear}
+              className='material-icons'>delete</FontIcon>
+            <FontIcon
               onClick={this.handleClose}
               className='material-icons'>close</FontIcon>
           </ToolbarGroup>
@@ -81,6 +99,17 @@ var PlotterPanel = React.createClass({
   },
   handleSetChannel: function() {
     PlotterActions.setChannel(this.props.panel, this.state.channelValue);
+  },
+  handleRecordToggle: function() {
+    if (this.state.recording) {
+      PlotterActions.pauseRecording(this.props.panel);
+    }
+    else {
+      PlotterActions.startRecording(this.props.panel);
+    }
+  },
+  handleClear: function() {
+    PlotterActions.clear(this.props.panel);
   }
 });
 

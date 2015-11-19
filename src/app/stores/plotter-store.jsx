@@ -4,10 +4,12 @@ var ActionTypes = require('../constants/action-types');
 var MessageStore = require('../stores/message-store');
 
 var _plotters = new WeakMap();
+var _lastTimestamp = 0;
 
 function addPlotter(panel) {
   _plotters.set(panel, {
     channel: '',
+    recording: false,
     keys: [],
     data: [],
     lastTimestamp: 0,
@@ -32,12 +34,15 @@ function updateData(plotter) {
     if (message.timestamp <= plotter.lastTimestamp) {
       break;
     }
-    if (plotter.keys.length > 0 && message.channel == plotter.channel) {
+    var shouldRecord = plotter.recording && plotter.keys.length > 0;
+    if (shouldRecord > 0 && message.channel == plotter.channel) {
       var values = message.message
         .split(' ')
         .map((str) => +str);
       if (values.length < plotter.keys.length) {
-        values.fill(0, values.length, plotter.keys.length);
+        var start = values.length;
+        values.length = plotter.keys.length;
+        values.fill(0, start, plotter.keys.length);
       }
       values.length = plotter.keys.length;
       values.unshift(message.timestamp);
@@ -80,10 +85,17 @@ PlotterStore.getData = function(panel) {
   updateData(plotter);
   return plotter.data;
 };
+PlotterStore.isRecording = function(panel) {
+  if (!_plotters.has(panel)) addPlotter(panel);
+  return _plotters.get(panel).recording;
+};
 
 DashDispatcher.register(function(action) {
   switch (action.type) {
     case ActionTypes.RECEIVE_PORT_DATA:
+      if (action.data.timestamp > _lastTimestamp) {
+        _lastTimestamp = action.data.timestamp;
+      }
       DashDispatcher.waitFor([MessageStore.dispatchToken]);
       PlotterStore.emitChange();
       break;
@@ -91,8 +103,28 @@ DashDispatcher.register(function(action) {
       if (!_plotters.has(action.panel)) addPlotter(action.panel);
       var plotter = _plotters.get(action.panel);
       plotter.channel = action.channel;
-      plotter.data.length = 0;
       plotter.keys.length = 0;
+      PlotterStore.emitChange();
+      break;
+    case ActionTypes.START_PLOTTER_RECORDING:
+      if (!_plotters.has(action.panel)) addPlotter(action.panel);
+      var plotter = _plotters.get(action.panel);
+      plotter.recording = true;
+
+      // continue from latest messages
+      plotter.lastTimestamp = _lastTimestamp;
+      PlotterStore.emitChange();
+      break;
+    case ActionTypes.PAUSE_PLOTTER_RECORDING:
+      if (!_plotters.has(action.panel)) addPlotter(action.panel);
+      var plotter = _plotters.get(action.panel);
+      plotter.recording = false;
+      PlotterStore.emitChange();
+      break;
+    case ActionTypes.CLEAR_PLOTTER:
+      if (!_plotters.has(action.panel)) addPlotter(action.panel);
+      var plotter = _plotters.get(action.panel);
+      plotter.data.length = 0;
       PlotterStore.emitChange();
       break;
   }

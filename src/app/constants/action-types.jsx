@@ -9,5 +9,8 @@ module.exports = {
   OPEN_PANEL: Symbol('open-panel'),
   CLOSE_PANEL: Symbol('close-panel'),
   TOGGLE_TERMINAL_PLAYPAUSE: Symbol('toggle-terminal-playpause'),
+  START_PLOTTER_RECORDING: Symbol('start-plotter-recording'),
+  PAUSE_PLOTTER_RECORDING: Symbol('pause-plotter-recording'),
+  CLEAR_PLOTTER: Symbol('clear-plotter'),
   SET_PLOTTER_CHANNEL: Symbol('set-plotter-channel')
 };
