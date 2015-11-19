@@ -93,7 +93,7 @@ function connect(sp, socket) {
   sp.on('close', function() {
     info('Port closed: ' + sp.path);
     openPorts.delete(sp.path);
-    sp.emit('port-close');
+    socket.emit('port-close');
   });
 
   sp.on('error', function(err) {
