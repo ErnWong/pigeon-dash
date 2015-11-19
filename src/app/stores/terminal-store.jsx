@@ -1,9 +1,11 @@
 var EventEmitter = require('events').EventEmitter;
 var DashDispatcher = require('../dispatcher/dash-dispatcher');
 var ActionTypes = require('../constants/action-types');
+var MessageStore = require('../stores/message-store');
+var MessageUpdate = require('../utils/message-update');
+var clipBuffer = require('../utils/message-clip');
 
 var _terminals = new WeakMap();
-var _messages = [];
 
 function addTerminal(panel) {
   _terminals.set(panel, {
@@ -15,13 +17,12 @@ function addTerminal(panel) {
 
 var MAX_BUFFER_SIZE = 128;
 
-function clipBuffer(buffer) {
-  if (buffer.length > MAX_BUFFER_SIZE) {
-    buffer.splice(0, buffer.length - MAX_BUFFER_SIZE);
-  }
-}
-
 function updateMessages(terminal) {
+  var buffer = MessageStore.getMessages();
+  MessageUpdate(terminal.messages, buffer, function(message) {
+    return true;
+  });
+  /*
   var lastMessage = terminal.messages[terminal.messages.length - 1];
   var i = _messages.length - 1;
   while (i >= 0) {
@@ -34,7 +35,8 @@ function updateMessages(terminal) {
       return true;
     });
   terminal.messages.push.apply(terminal.messages, newMessages);
-  clipBuffer(terminal.messages);
+  */
+  clipBuffer(terminal.messages, MAX_BUFFER_SIZE);
 }
 
 var TerminalStore = new EventEmitter();
@@ -67,8 +69,7 @@ TerminalStore.isPaused = function(panel) {
 DashDispatcher.register(function(action) {
   switch (action.type) {
     case ActionTypes.RECEIVE_PORT_DATA:
-      _messages.push(action.data);
-      clipBuffer(_messages);
+      DashDispatcher.waitFor([MessageStore.dispatchToken]);
       TerminalStore.emitChange();
       break;
     case ActionTypes.TOGGLE_TERMINAL_PLAYPAUSE:

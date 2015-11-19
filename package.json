@@ -19,7 +19,8 @@
     "react-dom": "0.14.x",
     "react-tap-event-plugin": "0.2.x",
     "flux": "2.1.x",
-    "material-ui": "0.13.x"
+    "material-ui": "0.13.x",
+    "dygraphs": "1.1.x"
   },
   "devDependencies": {
     "gulp": "3.9.x",
