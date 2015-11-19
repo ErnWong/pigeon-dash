@@ -15,6 +15,7 @@ sp.close = function(cb) {
   setTimeout(function() {
     sp.emit('close');
     cb();
+    sp.removeAllListeners();
   }, 0);
 };
 sp.write = function(msg, cb) {
