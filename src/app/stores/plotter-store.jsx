@@ -2,7 +2,6 @@ var EventEmitter = require('events').EventEmitter;
 var DashDispatcher = require('../dispatcher/dash-dispatcher');
 var ActionTypes = require('../constants/action-types');
 var MessageStore = require('../stores/message-store');
-//var MessageUpdate = require('../utils/message-update');
 
 var _plotters = new WeakMap();
 
@@ -22,6 +21,7 @@ function updateKey(plotter, message) {
 function updateData(plotter) {
   var buffer = MessageStore.getMessages();
 
+  // Accumulate new messages
   var i = buffer.length - 1;
   var newData = [];
   while (i >= 0) {
@@ -45,41 +45,14 @@ function updateData(plotter) {
     }
     i--;
   }
+
+  // Add new messages
   plotter.data.push.apply(plotter.data, newData);
+
+  // Set last timestamp
   if (plotter.data.length > 0) {
     plotter.lastTimestamp = plotter.data[plotter.data.length - 1][0];
   }
-
-  // add new messages
-  /*MessageUpdate(plotter.lastMessageAsArray, buffer, function(message) {
-    if (message.channel == plotter.channel + '.keys') {
-      updateKey(plotter, message);
-    }
-    return message.channel === plotter.channel;
-  });
-
-  // remove old message
-  plotter.lastMessageAsArray.shift();
-
-  if (plotter.keys.length > 0) {
-    plotter.lastMessageAsArray.forEach(function(message) {
-      var values = message.message
-        .split(' ')
-        .map((str) => +str);
-      if (values.length < plotter.keys.length) {
-        values.fill(0, values.length, plotter.keys.length);
-      }
-      values.length = plotter.keys.length;
-      values.unshift(message.timestamp);
-      plotter.data.push(values);
-    });
-  }
-
-  // remove all but last message
-  var lastMessage = plotter.lastMessageAsArray[plotter.lastMessageAsArray.length - 1];
-  plotter.lastMessageAsArray[0] = lastMessage;
-  plotter.lastMessageAsArray.length = 1;
-  //console.log('lastMessage:', lastMessage);*/
 }
 
 var PlotterStore = new EventEmitter();

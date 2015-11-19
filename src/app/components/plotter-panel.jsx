@@ -26,18 +26,15 @@ var PlotterPanel = React.createClass({
     state.channelValue = '';
     return state;
   },
-  componentsWillMount: function() {
-    //this.intervals = [];
+  componentWillMount: function() {
+    this.intervals = [];
   },
   componentDidMount: function() {
     PlotterStore.addChangeListener(this.storeChanged);
-    this.intervals = [];
     this.intervals.push(setInterval(this.tick, 40));
     this.dygraph = new Dygraph(this.refs.graphDiv, [[0]], {
       labels: ['time']
     });
-    //DEBUG:
-    (window.dash ? window.dash : window.dash = {}).data = this.state.data;
   },
   componentWillUnmount: function() {
     PlotterStore.removeChangeListener(this.storeChanged);
@@ -76,27 +73,6 @@ var PlotterPanel = React.createClass({
         </Toolbar>
         <div ref='graphDiv'>
         </div>
-        {/*
-        <svg>
-          {
-            this.state.keys.map((key, index) => {
-              return (
-                <path d={
-                  this.state.data.reduceRight((out, data, i, array) => {
-                    if (!array[i + 1]) {
-                      return `M 0 ${data.values[index]}`;
-                    }
-                    var prev = array[i + 1];
-                    var timestampChange = data.timestamp - prev.timestamp;
-                    var valueChange = data.values[index] - prev.values[index];
-                    return out + ` l ${timestampChange} ${valueChange}`;
-                  }, '')
-                } />
-              );
-            })
-          }
-        </svg>
-        */}
       </Panel>
     );
   },
