@@ -21,7 +21,7 @@ sp.write = function(msg, cb) {
   msg = msg.trim();
   switch (msg) {
     case 'stream.keys':
-      sendMessage('stream.keys', 'sine noisy');
+      sendMessage('stream.keys', 'sine squiggly noisy');
       break;
   }
   setTimeout(function() {
@@ -42,8 +42,9 @@ function open() {
 function tick() {
   var t = (Date.now() - startTime) / 1000;
   var sine = 5 * Math.sin(t);
-  var noisy = sine + Math.random();
-  sendMessage('stream', [sine, noisy].join(' '));
+  var squiggly = Math.sin(10 * t) + Math.sin(11 * t);
+  var noisy = sine + 2 * (0.5 - Math.random());
+  sendMessage('stream', [sine, squiggly, noisy].join(' '));
 }
 
 function sendMessage(key, msg) {
