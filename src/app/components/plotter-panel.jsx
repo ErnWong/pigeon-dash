@@ -26,16 +26,24 @@ var PlotterPanel = React.createClass({
     state.channelValue = '';
     return state;
   },
+  componentWillMount: function() {
+    this.intervals = [];
+  },
   componentDidMount: function() {
     PlotterStore.addChangeListener(this.storeChanged);
+    this.intervals.push(setInterval(this.tick, 40));
     this.dygraph = new Dygraph(this.refs.graphDiv, [[0]], {
       labels: ['time']
     });
   },
   componentWillUnmount: function() {
     PlotterStore.removeChangeListener(this.storeChanged);
+    this.intervals.forEach(clearInterval);
   },
   storeChanged: function() {
+    //this.setState(getState(this));
+  },
+  tick: function() {
     this.setState(getState(this));
     var data = this.state.data;
     if (data.length === 0) {
