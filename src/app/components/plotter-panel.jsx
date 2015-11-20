@@ -17,7 +17,8 @@ function getState(component) {
   return {
     recording: PlotterStore.isRecording(panel),
     keys: PlotterStore.getKeys(panel),
-    data: PlotterStore.getData(panel)
+    data: PlotterStore.getData(panel),
+    channel: PlotterStore.getChannel(panel)
   };
 }
 
@@ -87,6 +88,9 @@ var PlotterPanel = React.createClass({
               onClick={this.handleRecordToggle}
               className='material-icons'>{this.state.recording? 'pause' : 'fiber_manual_record'}</FontIcon>
             <FontIcon
+              onClick={this.handleSave}
+              className='material-icons'>save</FontIcon>
+            <FontIcon
               onClick={this.handleClear}
               className='material-icons'>delete</FontIcon>
             <FontIcon
@@ -116,6 +120,21 @@ var PlotterPanel = React.createClass({
     else {
       PlotterActions.startRecording(this.props.panel);
     }
+  },
+  handleSave: function() {
+    var keys = ['time'].concat(this.state.keys);
+    var header = keys.map(function(entry) {
+      return '"' + entry.replace(/"/g, '""') + '"';
+    });
+    var data = this.state.data;
+    var body = this.state.data.map(function(entry) {
+      return entry.join(',');
+    });
+    var csv = [header].concat(body).join('\n');
+    var link = document.createElement('a');
+    link.download = this.state.channel + '.csv';
+    link.href = 'data:text/csv;base64,' + btoa(csv);
+    link.click();
   },
   handleClear: function() {
     PlotterActions.clear(this.props.panel);
