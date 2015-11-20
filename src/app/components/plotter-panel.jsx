@@ -35,6 +35,7 @@ var PlotterPanel = React.createClass({
     this.setInterval();
     this.dygraph = new Dygraph(this.refs.graphDiv, [[0]], {
       labels: ['time'],
+      rightGap: 0,
       showRangeSelector: true
     });
   },
@@ -68,7 +69,11 @@ var PlotterPanel = React.createClass({
   },
   render: function() {
     return (
-      <Panel>
+      <Panel
+        style={{
+          display: 'flex',
+          flexFlow: 'column'
+        }}>
         <Toolbar>
           <ToolbarGroup key={0} float='left'>
             <TextField
@@ -89,7 +94,11 @@ var PlotterPanel = React.createClass({
               className='material-icons'>close</FontIcon>
           </ToolbarGroup>
         </Toolbar>
-        <div ref='graphDiv'>
+        <div
+          ref='graphDiv'
+          style={{
+            flexGrow: '1'
+          }}>
         </div>
       </Panel>
     );
