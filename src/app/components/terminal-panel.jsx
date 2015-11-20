@@ -74,7 +74,6 @@ var TerminalPanel = React.createClass({
             color: '#FFFFFF',
             fontFamily: 'Consolas',
             fontSize: '10pt',
-            padding: '1em',
             display: 'flex',
             flexFlow: 'column'
           }}>
@@ -83,6 +82,7 @@ var TerminalPanel = React.createClass({
             style={{
               overflow: 'auto',
               flexGrow: '1',
+              padding: '1em 1em 0.5em 1em',
               height: '0'
             }}>
             <pre>
@@ -92,7 +92,8 @@ var TerminalPanel = React.createClass({
           <div
             style={{
               display: 'flex',
-              flexFlow: 'row'
+              flexFlow: 'row',
+              padding: '0.5em 1em 1em 1em'
             }}>
             <FontIcon
               className='material-icons'
