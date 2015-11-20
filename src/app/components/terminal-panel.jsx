@@ -26,10 +26,20 @@ var TerminalPanel = React.createClass({
     return state;
   },
   componentDidMount: function() {
+    this.refs.termBox.scrollTop = this.refs.termBox.scrollHeight;
     TerminalStore.addChangeListener(this.storeChanged);
   },
   componentWillUnmount: function() {
     TerminalStore.removeChangeListener(this.storeChanged);
+  },
+  componentWillUpdate: function() {
+    var el = this.refs.termBox;
+    this.shouldScrollBottom = el.scrollTop + el.offsetHeight >= el.scrollHeight;
+  },
+  componentDidUpdate: function() {
+    if (this.shouldScrollBottom) {
+      this.refs.termBox.scrollTop = this.refs.termBox.scrollHeight;
+    }
   },
   storeChanged: function() {
     this.setState(getState(this));
@@ -69,6 +79,7 @@ var TerminalPanel = React.createClass({
             flexFlow: 'column'
           }}>
           <div
+            ref='termBox'
             style={{
               overflow: 'auto',
               flexGrow: '1',
