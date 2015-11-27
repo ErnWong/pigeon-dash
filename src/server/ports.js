@@ -23,7 +23,7 @@ function available(cb) {
 function open(path, socket, cb) {
   available(function(err, ports) {
     var port = ports.find(function(port) {
-      port.comName = path;
+      return port.comName == path;
     });
     if (!port) {
       var err = new Error('Opening unavailable port: ' + path);
