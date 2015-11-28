@@ -26,6 +26,7 @@ var PlotterPanel = React.createClass({
   getInitialState: function() {
     var state = getState(this);
     state.channelValue = '';
+    state.mapping = false;
     return state;
   },
   componentWillMount: function() {
@@ -57,15 +58,33 @@ var PlotterPanel = React.createClass({
   tick: function() {
     this.setState(getState(this));
     var data = this.state.data;
-    var keys = ['time'].concat(this.state.keys)
+    var keys = ['time'].concat(this.state.keys);
+    var minX = 1/0;
+    var maxX = -1/0;
+
     if (data.length === 0) {
       var zeroes = Array(keys.length).fill(0);
-      // so Dygraph knows its intentionally empty
+      // so Dygraph knows it's intentionally empty
       data = [zeroes];
     }
+    if (this.state.mapping && keys.length > 3) {
+      // remove time
+      keys.shift();
+      // remain 2
+      keys.length = 2;
+
+      data = data.map(function(entry) {
+        if (entry[1] < minX) minX = entry[1];
+        if (entry[1] > maxX) maxX = entry[1];
+        return [entry[1], entry[2]];
+      });
+    }
+
     this.dygraph.updateOptions({
       file: data,
-      labels: keys
+      labels: keys,
+      showRangeSelector: !this.state.mapping,
+      dateWindow: this.state.mapping? [minX, maxX]: null
     });
   },
   render: function() {
@@ -79,6 +98,9 @@ var PlotterPanel = React.createClass({
           <ToolbarGroup key={0} float='left'>
             <TextField
               hintText='Channel'
+              style={{
+                width: '200px'
+              }}
               value={this.state.channelValue}
               onChange={(e) => this.setState({channelValue: e.target.value})}
               onEnterKeyDown={this.handleSetChannel} />
@@ -93,6 +115,9 @@ var PlotterPanel = React.createClass({
             <FontIcon
               onClick={this.handleClear}
               className='material-icons'>delete</FontIcon>
+            <FontIcon
+              onClick={this.handleMapToggle}
+              className='material-icons'>{this.state.mapping? 'timeline' : 'map'}</FontIcon>
             <FontIcon
               onClick={this.handleClose}
               className='material-icons'>close</FontIcon>
@@ -138,6 +163,9 @@ var PlotterPanel = React.createClass({
   },
   handleClear: function() {
     PlotterActions.clear(this.props.panel);
+  },
+  handleMapToggle: function() {
+    this.state.mapping = !this.state.mapping;
   }
 });
 
