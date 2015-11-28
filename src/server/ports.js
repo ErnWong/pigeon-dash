@@ -12,10 +12,10 @@ var openPorts = new Map();
 function available(cb) {
   serialport.list(function(err, ports) {
     if (err) cb(err);
+    ports.push(mock.info);
     ports = ports.filter(function(port) {
       return !openPorts.has(port.comName);
     });
-    ports.push(mock.info);
     cb(err, ports);
   });
 }
