@@ -24,6 +24,9 @@ sp.write = function(msg, cb) {
     case 'stream.keys':
       sendMessage('stream.keys', 'sine squiggly noisy');
       break;
+    case 'reckoner.keys':
+      sendMessage('reckoner.keys', 'x y heading velocity');
+      break;
   }
   setTimeout(function() {
     cb();
@@ -33,7 +36,7 @@ sp.path = info.comName;
 
 function open() {
   startTime = Date.now();
-  interval = setInterval(tick, 20);
+  interval = setInterval(tick, 40);
   setTimeout(function() {
     sp.emit('open');
   }, 0);
@@ -46,6 +49,12 @@ function tick() {
   var squiggly = Math.sin(10 * t) + Math.sin(11 * t);
   var noisy = sine + 2 * (0.5 - Math.random());
   sendMessage('stream', [sine, squiggly, noisy].join(' '));
+
+  var x = sine;
+  var y = 6 * Math.cos(1.3 * t);
+  var heading = (t + Math.PI) % (2 * Math.PI) - Math.PI;
+  var velocity = sine;
+  sendMessage('reckoner', [x, y, heading, velocity].join(' '));
 }
 
 function sendMessage(key, msg) {
