@@ -56,6 +56,9 @@ function close(path) {
 
 function write(path, msg) {
   var sp = getPort(path, 'Writing');
+  console.log("Writing to path:", path);
+  console.log("Message:", msg);
+  console.log("sp:", sp);
   sp.write(msg, function(err) {
     if (err) {
       error('Port failed to write: ' + err);
